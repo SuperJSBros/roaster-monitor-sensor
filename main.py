@@ -1,6 +1,5 @@
 # 2022-12-07 @HTSpecOps
 # Coffee Roaster Temperature Monitor Client
-
 from utime import sleep
 from machine import Pin, I2C
 import adafruit_mcp9600
@@ -31,3 +30,4 @@ while True:
     #file.write(temp_ambiant + "," + temp_probe + "\r\n")
     #file.flush()
     sleep(1)
+1
