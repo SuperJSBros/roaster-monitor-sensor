@@ -4,15 +4,14 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "npx tsc index.ts",
-    "dev": "concurrently \"npx tsc index.ts\" \"nodemon ./dist/index.js\""
+    "dev": "node index.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
     "@types/dotenv": "^8.2.0",
-    "@types/express": "^4.17.14",
+    "@types/express": "^4.17.15",
     "dotenv": "^16.0.3",
     "express": "^4.18.2"
   },
