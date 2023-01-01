@@ -6,13 +6,18 @@ dotenv.config();
 const app = express()
 const port = process.env.PORT
 
+let ambient
+let probe
+
 app.get("/", (req, res)=>{
-    res.send("My Coffee Roaster Monitor")
+    res.send(`My Coffee Roaster Monitor ambient : ${ambient} probe : ${probe}`)
 })
 app.get("/ambient/:ambientTemp/probe/:probeTemp", (req, res)=>{
-    let ambient = req.params.ambientTemp
-    let probe = req.params.probeTemp
+    ambient = req.params.ambientTemp
+    probe = req.params.probeTemp
     res.json({"ambient temperaature":ambient, "probe temperature":probe})
+    res.status(200)
+    console.log(`ambient : ${ambient}   probe : ${probe} `)
 })
 
 app.listen(port, ()=>{
