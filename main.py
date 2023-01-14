@@ -17,6 +17,7 @@ display = SH1107_I2C(width=128, height=64, i2c=i2c)
 # display label
 display.text("  Local | Probe", 0, 0, 1)
 display.show()
+
 while True:
     temp_ambiant = (str(mcp.ambient_temperature).split("."))[0]
     temp_probe = (str(mcp.temperature).split("."))[0]
