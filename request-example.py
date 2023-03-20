@@ -17,9 +17,12 @@ import urequests
 import random
 while True:
     ambient = random.randrange(0,100,1)
-    url = "http://192.168.1.21:3000/ambient/" + str(ambient) + "/probe/" + str(ambient)
+    url = "http://192.168.1.10:3000/daily-probes"
+    payload = {
+        'probe': ambient
+    }
     print(url)
-    r = urequests.get(url)
+    r = urequests.post(url, json=payload)
     print(r.status_code) #need to add timeout func for when server is down
     utime.sleep(1)
     r.close()
