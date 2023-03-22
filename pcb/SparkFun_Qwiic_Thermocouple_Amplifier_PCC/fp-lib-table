@@ -1,0 +1,4 @@
+(fp_lib_table
+  (version 7)
+  (lib (name "SparkFun_Qwiic_Thermocouple_Amplifier_PCC")(type "KiCad")(uri "$(KIPRJMOD)/SparkFun_Qwiic_Thermocouple_Amplifier_PCC.pretty")(options "")(descr ""))
+)
