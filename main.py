@@ -20,7 +20,7 @@ display = SH1107_I2C(width=128, height=64, i2c=i2c)
 # file = open("data.csv", "w")
 
 # URL for backend route
-url = "http://192.168.1.10:3000/daily-probes"
+url = config.URL
 print(url)
 
 # connect to Wifi
@@ -38,10 +38,7 @@ display.show()
 
 # HTTP REQUEST
 def sendData(probeData):
-    payload = {
-        'probe': probeData
-    }
-    
+    payload = {'probe': probeData }
     r = requests.post(url, json=payload)
     print(r.status_code) #need to add timeout func for when server is down
     r.close()
@@ -49,7 +46,7 @@ def sendData(probeData):
 while True:
     temp_ambiant = (str(mcp.ambient_temperature).split("."))[0]
     temp_probe = (str(mcp.temperature).split("."))[0]
-    # print(temp_ambiant, temp_probe)
+    print(temp_ambiant, temp_probe)
     print('probe temperature is %d' % round(mcp.temperature))
 
     display.fill_rect(20, 12, 120, 10, 0)
