@@ -1,0 +1,4 @@
+(sym_lib_table
+  (version 7)
+  (lib (name "SparkFun_Qwiic_Thermocouple_Amplifier_PCC-eagle-import")(type "KiCad")(uri "${KIPRJMOD}/SparkFun_Qwiic_Thermocouple_Amplifier_PCC-eagle-import.kicad_sym")(options "")(descr ""))
+)
