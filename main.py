@@ -4,16 +4,16 @@ from utime import sleep
 import urequests as requests
 from machine import Pin, I2C
 import adafruit_mcp9600
-from sh1107 import SH1107_I2C
+# from sh1107 import SH1107_I2C
 import network
 #import env var.
 import config
 
 # frequency must be set for the MCP9600 to function.
 # If you experience I/O errors, try changing the frequency.
-i2c = I2C(id=1, scl=Pin(15), sda=Pin(14), freq=100000)  # type: ignore
+i2c = I2C(id=1, scl=Pin(27), sda=Pin(26), freq=100000)  # type: ignore
 mcp = adafruit_mcp9600.MCP9600(i2c)
-display = SH1107_I2C(width=128, height=64, i2c=i2c)
+# display = SH1107_I2C(width=128, height=64, i2c=i2c)
 
 #temperature data store
 # file = open("data.csv", "w")
@@ -32,8 +32,8 @@ sleep(1)
 print(wlan.ifconfig())
 
 # display label
-display.text("  Local | Probe", 0, 0, 1)
-display.show()
+# display.text("  Local | Probe", 0, 0, 1)
+# display.show()
 
 # HTTP REQUEST
 def sendData(probeData):
@@ -47,10 +47,10 @@ while True:
     temp_probe = mcp.temperature * 1.8 +32
     print('ambiant : %d    probe : %d' % (round(temp_probe), round(temp_ambiant)))
 
-    display.fill_rect(20, 12, 120, 10, 0)
-    display.text(str(round(temp_ambiant)), 20, 14, 2)
-    display.text(str(round(temp_probe)), 82, 14, 2)
-    display.show()
+    # display.fill_rect(20, 12, 120, 10, 0)
+    # display.text(str(round(temp_ambiant)), 20, 14, 2)
+    # display.text(str(round(temp_probe)), 82, 14, 2)
+    # display.show()
 
     sendData(round(mcp.temperature))
 
