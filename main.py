@@ -2,18 +2,17 @@
 # Coffee Roaster Temperature Monitor Client
 from utime import sleep
 import urequests as requests
-from machine import Pin, I2C, ADC
+from machine import Pin, I2C
 import adafruit_mcp9600
 from sh1107 import SH1107_I2C
 import network
 #import env var.
 import config
 
-
 # frequency must be set for the MCP9600 to function.
 # If you experience I/O errors, try changing the frequency.
 i2c = I2C(id=1, scl=Pin(15), sda=Pin(14), freq=100000)  # type: ignore
-mcp = adafruit_mcp9600.MCP9600(i2c, 60)
+mcp = adafruit_mcp9600.MCP9600(i2c)
 display = SH1107_I2C(width=128, height=64, i2c=i2c)
 
 #temperature data store
@@ -23,7 +22,7 @@ display = SH1107_I2C(width=128, height=64, i2c=i2c)
 url = config.URL
 print(url)
 
-# connect to Wifi
+#connect to Wifi
 wlan = network.WLAN(network.STA_IF)
 wlan.active(True)
 wlan.connect(config.WLAN_ID, config.WLAN_PASS)
@@ -40,18 +39,17 @@ display.show()
 def sendData(probeData):
     payload = {'probe': probeData }
     r = requests.post(url, json=payload)
-    print(r.status_code) #need to add timeout func for when server is down
+    print('http %d' % r.status_code) #need to add timeout func for when server is down
     r.close()
 
 while True:
-    temp_ambiant = (str(mcp.ambient_temperature).split("."))[0]
-    temp_probe = (str(mcp.temperature).split("."))[0]
-    print(temp_ambiant, temp_probe)
-    print('probe temperature is %d' % round(mcp.temperature))
+    temp_ambiant = mcp.ambient_temperature * 1.8 + 32 #convert to Fahrenheit
+    temp_probe = mcp.temperature * 1.8 +32
+    print('ambiant : %d    probe : %d' % (round(temp_probe), round(temp_ambiant)))
 
     display.fill_rect(20, 12, 120, 10, 0)
-    display.text(temp_ambiant, 20, 12, 2)
-    display.text(temp_probe, 82, 12, 2)
+    display.text(str(round(temp_ambiant)), 20, 14, 2)
+    display.text(str(round(temp_probe)), 82, 14, 2)
     display.show()
 
     sendData(round(mcp.temperature))
@@ -59,5 +57,3 @@ while True:
     #file.write(temp_ambiant + "," + temp_probe + "\r\n")
     #file.flush()
     sleep(1)
-
-
