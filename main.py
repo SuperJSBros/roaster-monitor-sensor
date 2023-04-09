@@ -29,7 +29,7 @@ wlan.active(True)
 while not wlan.isconnected():
     wlan.connect(config.WLAN_ID, config.WLAN_PASS)
     print("Waiting to connect to %s" % config.WLAN_ID)
-    sleep(3) #added extra time to connecto to wifi
+    sleep(3)
 
 print(wlan.ifconfig())
 
@@ -56,7 +56,7 @@ while True:
         #display.text(str(round(temp_probe)), 82, 14, 2)
         #display.show()
 
-        sendData(round(mcp.temperature))
+        sendData(round(temp_probe))
         led.on()
     
         # DATA LOGGER
