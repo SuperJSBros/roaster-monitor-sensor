@@ -35,7 +35,7 @@ while not wlan.isconnected():
 print(wlan.ifconfig())
 # HTTP REQUEST
 def sendData(payload):
-    res = requests.post(url, data="HELLO")
+    res = requests.post(url, data=payload)
     print('http %d   payload: %s' % (res.status_code, payload)) #need to add timeout func for when server is down
     res.close()
 
