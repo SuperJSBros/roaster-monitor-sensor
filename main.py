@@ -1,8 +1,9 @@
 # 2022-12-07 @HTSpecOps
+# 2025-05-25 @HTSpecOps restarted working on this project
 # Coffee Roaster Temperature Monitor Client
 from time import sleep
-import requests
 from machine import Pin, I2C
+import requests
 import adafruit_mcp9600
 import network
 #import env var.
@@ -19,6 +20,8 @@ led = Pin("LED", machine.Pin.OUT) # onbord LED
 
 # URL for backend route
 url = config.URL
+# plain header is used when the data format is Influxdb type
+headers = {'Content-Type': 'text/plain'}
 print(url)
 
 # Connect To Wifi
@@ -31,11 +34,10 @@ while not wlan.isconnected():
 
 print(wlan.ifconfig())
 # HTTP REQUEST
-def sendData(probeData):
-    payload = {'probe': probeData }
-    r = requests.post(url, json=payload)
-    print('http %d' % r.status_code) #need to add timeout func for when server is down
-    r.close()
+def sendData(payload):
+    res = requests.post(url, data="HELLO")
+    print('http %d   payload: %s' % (res.status_code, payload)) #need to add timeout func for when server is down
+    res.close()
 
 while True:
     while wlan.isconnected():
@@ -44,12 +46,12 @@ while True:
         temp_probe = mcp.temperature * 1.8 +32
         print('ambiant : %d    probe : %d' % (round(temp_probe), round(temp_ambiant)))
 
-        #sendData(round(temp_probe))
+        payload = "roast,roaster_id=" + str(config.ROASTER_ID) + " temp_ambiant=" + str(round(temp_ambiant))
+        sendData(payload)
         led.on()
-        print(config.ROASTER_ID)
     
         # DATA LOGGER
         #file.write(temp_ambiant + "," + temp_probe + "\r\n")
         #file.flush()
-        sleep(5)
+        sleep(1)
         led.off()
