@@ -5,9 +5,7 @@ config.py
 .vscode
 
 #Micropython Libraries
-adafruit_register/
-adafruit_mcp9600.py
-sh1107.py
+lib/
 
 # Logs
 logs
