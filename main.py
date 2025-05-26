@@ -1,8 +1,8 @@
 # 2022-12-07 @HTSpecOps
 # 2025-05-25 @HTSpecOps restarted working on this project
 # Coffee Roaster Temperature Monitor Client
+import asyncio
 import network
-import ntptime
 from machine import Pin, I2C
 import requests
 import adafruit_mcp9600
@@ -34,29 +34,31 @@ while not wlan.isconnected():
     time.sleep(3)
 
 print(wlan.ifconfig())
-# Synchronize time via NTP
-ntptime.settime()
-timestamp = int(time.time() * 1e9)  # nanoseconds for InfluxDB
+
+
 
 # HTTP REQUEST
 def sendData(payload):
     res = requests.post(url, data=payload)
     print('http %d   payload: %s' % (res.status_code, payload)) #need to add timeout func for when server is down
+    led.off() if res.status_code != 204 else led.on()
     res.close()
+
+def sample_data():
+
+    temp_ambiant = mcp.ambient_temperature * 1.8 + 32  # convert to Fahrenheit
+    temp_probe = mcp.temperature * 1.8 + 32
+    #print('ambiant : %d    probe : %d' % (round(temp_probe), round(temp_ambiant)))
+
+    payload = "roast,roaster_id=" + str(config.ROASTER_ID) + " temp_ambiant=" + str(round(temp_ambiant)) + ",temp_probe=" + str(round(temp_probe))
+    sendData(payload)
 
 while True:
     while wlan.isconnected():
 
-        temp_ambiant = mcp.ambient_temperature * 1.8 + 32 #convert to Fahrenheit
-        temp_probe = mcp.temperature * 1.8 +32
-        print('ambiant : %d    probe : %d' % (round(temp_probe), round(temp_ambiant)))
-
-        payload = "roast,roaster_id=" + str(config.ROASTER_ID) + " temp_ambiant=" + str(round(temp_ambiant)) + ",temp_probe=" + str(round(temp_probe)) + " " + str(timestamp)
-        sendData(payload)
-        led.on()
+        sample_data()
     
         # DATA LOGGER
         #file.write(temp_ambiant + "," + temp_probe + "\r\n")
         #file.flush()
         time.sleep(1)
-        led.off()
