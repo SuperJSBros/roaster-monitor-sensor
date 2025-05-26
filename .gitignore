@@ -4,9 +4,6 @@ config.py
 #VS Code and Pico Plugin
 .vscode
 
-#Micropython Libraries
-lib/
-
 # Logs
 logs
 *.log
