@@ -1,11 +1,12 @@
 # 2022-12-07 @HTSpecOps
 # 2025-05-25 @HTSpecOps restarted working on this project
 # Coffee Roaster Temperature Monitor Client
-from time import sleep
+import network
+import ntptime
 from machine import Pin, I2C
 import requests
 import adafruit_mcp9600
-import network
+import time
 #import env var.
 import config
 
@@ -30,9 +31,13 @@ wlan.active(True)
 while not wlan.isconnected():
     wlan.connect(config.WLAN_ID, config.WLAN_PASS)
     print("Waiting to connect to %s" % config.WLAN_ID)
-    sleep(3)
+    time.sleep(3)
 
 print(wlan.ifconfig())
+# Synchronize time via NTP
+ntptime.settime()
+timestamp = int(time.time() * 1e9)  # nanoseconds for InfluxDB
+
 # HTTP REQUEST
 def sendData(payload):
     res = requests.post(url, data=payload)
@@ -46,12 +51,12 @@ while True:
         temp_probe = mcp.temperature * 1.8 +32
         print('ambiant : %d    probe : %d' % (round(temp_probe), round(temp_ambiant)))
 
-        payload = "roast,roaster_id=" + str(config.ROASTER_ID) + " temp_ambiant=" + str(round(temp_ambiant))
+        payload = "roast,roaster_id=" + str(config.ROASTER_ID) + " temp_ambiant=" + str(round(temp_ambiant)) + ",temp_probe=" + str(round(temp_probe)) + " " + str(timestamp)
         sendData(payload)
         led.on()
     
         # DATA LOGGER
         #file.write(temp_ambiant + "," + temp_probe + "\r\n")
         #file.flush()
-        sleep(1)
+        time.sleep(1)
         led.off()
