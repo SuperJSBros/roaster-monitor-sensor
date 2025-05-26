@@ -39,11 +39,19 @@ print(wlan.ifconfig())
 
 # HTTP REQUEST
 def sendData(payload):
-    res = requests.post(url, data=payload)
-    print('http %d   payload: %s' % (res.status_code, payload)) #need to add timeout func for when server is down
-    led.off() if res.status_code != 204 else led.on()
-    res.close()
-
+    # res = requests.post(url, data=payload, timeout=5))
+    # print('http %d   payload: %s' % (res.status_code, payload)) #need to add timeout func for when server is down
+    # led.off() if res.status_code != 204 else led.on()
+    # res.close()
+    try:
+        res = requests.post(url, data=payload, timeout=10)
+        print('http %d payload: %s' % (res.status_code, payload))
+        led.off() if res.status_code != 204 else led.on() # Turn off LED if not 204 (No Content), else turn it on
+        res.close()
+        return  # Success, exit the function
+    except OSError as e:
+            print("Failed to send data due to OSError: %s" %  e)
+    
 def sample_data():
 
     temp_ambiant = mcp.ambient_temperature * 1.8 + 32  # convert to Fahrenheit
@@ -61,4 +69,4 @@ while True:
         # DATA LOGGER
         #file.write(temp_ambiant + "," + temp_probe + "\r\n")
         #file.flush()
-        time.sleep(1)
+        time.sleep(2)
