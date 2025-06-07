@@ -35,14 +35,8 @@ while not wlan.isconnected():
 
 print(wlan.ifconfig())
 
-
-
 # HTTP REQUEST
 def sendData(payload):
-    # res = requests.post(url, data=payload, timeout=5))
-    # print('http %d   payload: %s' % (res.status_code, payload)) #need to add timeout func for when server is down
-    # led.off() if res.status_code != 204 else led.on()
-    # res.close()
     try:
         res = requests.post(url, data=payload, timeout=10)
         print('http %d payload: %s' % (res.status_code, payload))
@@ -56,9 +50,7 @@ def sample_data():
 
     temp_ambiant = mcp.ambient_temperature * 1.8 + 32  # convert to Fahrenheit
     temp_probe = mcp.temperature * 1.8 + 32
-    #print('ambiant : %d    probe : %d' % (round(temp_probe), round(temp_ambiant)))
-
-    payload = "roast,roaster_id=" + str(config.ROASTER_ID) + " temp_ambiant=" + str(round(temp_ambiant)) + ",temp_probe=" + str(round(temp_probe))
+    payload = "roast,roaster_id=" + str(config.ROASTER_ID) + ",batch_id=" + str(config.BATCH_ID) + " temp_ambiant=" + str(round(temp_ambiant)) + ",temp_probe=" + str(round(temp_probe))
     sendData(payload)
 
 while True:
