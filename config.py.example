@@ -1,3 +1,21 @@
 WLAN_ID='YOUR_SSID'
 WLAN_PASS='YOUR_WIFI_PASSWORD'
-URL='http://192.168.1.10:3000/daily-probes'
+URL='http://192.168.1.5:8085/telegraf'
+
+PAYLOAD = {
+    "machine":{
+        "id": 1,
+        "description": "CBR-101",
+        "capacity": 200,
+        "energy_consumption": 1500
+        },
+    "roast":{
+        "id": 2,
+        "bean":{ 
+            "origin": "Ethiopia",
+            "variety": "Yirgacheffe",
+            "process": "Washed"
+            },
+        "weight_green": 200
+    }
+}
