@@ -7,6 +7,7 @@ from machine import Pin, I2C
 import requests
 import adafruit_mcp9600
 import time
+import json
 #import env var.
 import config
 
@@ -21,8 +22,6 @@ led = Pin("LED", machine.Pin.OUT) # onbord LED
 
 # URL for backend route
 url = config.URL
-# plain header is used when the data format is Influxdb type
-headers = {'Content-Type': 'text/plain'}
 print(url)
 
 # Connect To Wifi
@@ -36,28 +35,30 @@ while not wlan.isconnected():
 print(wlan.ifconfig())
 
 # HTTP REQUEST
-def sendData(payload):
+def sendData(): #require json format
+    
+    payload = config.SETTINGS  # Use the settings from config.py
+    payload.update({
+        "temperature": {
+            "ambient": mcp.ambient_temperature * 1.8 + 32,  # convert to Fahrenheit
+            "probe": mcp.temperature * 1.8 + 32
+        }
+    })
+    
     try:
-        res = requests.post(url, data=payload, timeout=10)
-        print('http %d payload: %s' % (res.status_code, payload))
+        res = requests.post(url, json=payload, timeout=10)
+        print('http %d payload: %s' % (res.status_code, json.dumps(payload)))
         led.off() if res.status_code != 204 else led.on() # Turn off LED if not 204 (No Content), else turn it on
         res.close()
         return  # Success, exit the function
     except OSError as e:
             print("Failed to send data due to OSError: %s" %  e)
     
-def sample_data():
-
-    temp_ambiant = mcp.ambient_temperature * 1.8 + 32  # convert to Fahrenheit
-    temp_probe = mcp.temperature * 1.8 + 32
-    payload = "roast,roaster_id=" + str(config.ROASTER_ID) + ",batch_id=" + str(config.BATCH_ID) + " temp_ambiant=" + str(round(temp_ambiant)) + ",temp_probe=" + str(round(temp_probe))
-    sendData(payload)
 
 while True:
     while wlan.isconnected():
-
-        sample_data()
-    
+        
+        sendData()
         # DATA LOGGER
         #file.write(temp_ambiant + "," + temp_probe + "\r\n")
         #file.flush()
